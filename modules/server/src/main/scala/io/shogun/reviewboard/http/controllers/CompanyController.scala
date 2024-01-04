@@ -19,7 +19,7 @@ class CompanyController private (service: CompanyService) extends BaseController
   }
 
   val getAll: ServerEndpoint[Any, Task] = getAllEndpoint.serverLogicSuccess { _ =>
-    service.getAll()
+    service.getAll
   }
 
   val getById: ServerEndpoint[Any, Task] = getByIdEndpoint.serverLogicSuccess { id =>
@@ -36,8 +36,7 @@ class CompanyController private (service: CompanyService) extends BaseController
 }
 
 object CompanyController {
-  val makeZIO: ZIO[CompanyService, Nothing, CompanyController] =
-    for {
-      service <- ZIO.service[CompanyService]
-    } yield new CompanyController(service)
+  val makeZIO: ZIO[CompanyService, Nothing, CompanyController] = for {
+    service <- ZIO.service[CompanyService]
+  } yield new CompanyController(service)
 }

@@ -60,7 +60,7 @@ lazy val foundations = (project in file("modules/foundations"))
 
 lazy val root = (project in file("."))
   .settings(
-    name := "ZIO-Learning"
+    name := "ZIO-Clean-Architecture",
   )
   .aggregate(foundations, server)
   .dependsOn(foundations, server)

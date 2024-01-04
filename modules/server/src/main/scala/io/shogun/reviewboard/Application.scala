@@ -1,7 +1,8 @@
 package io.shogun.reviewboard
 
 import io.shogun.reviewboard.http.HttpApi
-import io.shogun.reviewboard.services.CompanyService
+import io.shogun.reviewboard.repositories.{CompanyRepositoryLive, Repository}
+import io.shogun.reviewboard.services.{CompanyService, CompanyServiceLive}
 import zio.*
 import zio.http.Server
 import sttp.tapir.server.ziohttp.{ZioHttpInterpreter, ZioHttpServerOptions}
@@ -20,7 +21,12 @@ object Application extends ZIOAppDefault {
   override def run = serverProgram
     .provide(
       Server.default,
-      CompanyService.dummyLayer
+      //services//services
+      CompanyServiceLive.layer,
+      //repos
+      CompanyRepositoryLive.layer,
+      //other layers
+      Repository.dataLayer // quill & db-connection
   )
 }
 
