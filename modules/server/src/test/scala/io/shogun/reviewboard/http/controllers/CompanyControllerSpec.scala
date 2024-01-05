@@ -2,6 +2,7 @@ package io.shogun.reviewboard.http.controllers
 
 import io.shogun.reviewboard.domain.data.Company
 import io.shogun.reviewboard.http.requests.CreateCompanyRequest
+import io.shogun.reviewboard.services.CompanyService
 import zio.*
 import zio.json.*
 import sttp.tapir.generic.auto.*
@@ -12,7 +13,6 @@ import sttp.client3.testing.SttpBackendStub
 import sttp.monad.MonadError
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.ztapir.RIOMonadError
-
 import io.shogun.reviewboard.syntax.*
 
 object CompanyControllerSpec extends ZIOSpecDefault {
