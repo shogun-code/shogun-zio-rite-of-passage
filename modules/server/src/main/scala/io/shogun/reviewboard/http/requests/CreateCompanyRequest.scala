@@ -15,9 +15,9 @@ final case class CreateCompanyRequest(
   def toCompany(id: Long) =
     Company(
       id,
+      Company.makeSlug(name),
       name,
       url,
-      Company.makeSlug(name),
       location,
       country,
       industry,

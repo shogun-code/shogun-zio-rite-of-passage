@@ -7,18 +7,17 @@ import zio.*
 
 import scala.collection.mutable
 
+// Business logic
 trait CompanyService {
-  def create(req: CreateCompanyRequest): Task[Company]
+  def create(req: CreateCompanyRequest) : Task[Company]
   def getAll: Task[List[Company]]
   def getById(id: Long): Task[Option[Company]]
   def getBySlug(slug: String): Task[Option[Company]]
 }
 
-object CompanyService {
-  val dummyLayer = ZLayer.succeed(new CompanyServiceDummy)
-}
 
-class CompanyServiceLive private(repo: CompanyRepository) extends CompanyService {
+
+class CompanyServiceLive private(repo: CompanyRepository) extends CompanyService{
   override def create(req: CreateCompanyRequest): Task[Company] =
     repo.create(req.toCompany(-1L))
 
@@ -33,30 +32,36 @@ class CompanyServiceLive private(repo: CompanyRepository) extends CompanyService
 }
 
 object CompanyServiceLive {
-  val layer: ZLayer[CompanyRepository, Nothing, CompanyServiceLive] = ZLayer {
+  val layer = ZLayer{
     for {
       repo <- ZIO.service[CompanyRepository]
     } yield new CompanyServiceLive(repo)
   }
 }
 
-class CompanyServiceDummy extends CompanyService {
-  val db = mutable.Map[Long, Company]()
+// controller (http) -> service (business) -> repo (database)
 
-  override def create(req: CreateCompanyRequest): Task[Company] =
-    ZIO.succeed {
-      val id = db.keys.maxOption.getOrElse(0L) + 1
-      val company = req.toCompany(id)
-      db += (id -> company)
-      company
-    }
-
-  override def getAll: Task[List[Company]] = ZIO.succeed(db.values.toList)
-
-  override def getById(id: Long): Task[Option[Company]] = 
-    ZIO.succeed(db.get(id))
-
-  override def getBySlug(slug: String): Task[Option[Company]] = 
-    ZIO.succeed(db.values.find(_.slug == slug))
-}
-
+//class CompanyServiceDummy extends CompanyService {
+//  val db: mutable.Map[Long, Company] = mutable.Map[Long, Company]()
+//
+//  override def create(req: CreateCompanyRequest): Task[Company] =
+//    ZIO.succeed {
+//      val newId = db.keys.maxOption.getOrElse(0L) + 1
+//      val newCompany = req.toCompany(newId)
+//      db += (newId -> newCompany)
+//      newCompany
+//    }
+//
+//  override def getAll: Task[List[Company]] = ZIO.succeed(db.values.toList)
+//
+//  override def getById(id: Long): Task[Option[Company]] = ZIO
+//    .attempt(id)
+//    .map(db.get)
+//
+//  override def getBySlag(slug: String): Task[Option[Company]] = ZIO.succeed(
+//    db.values.find(_.slug == slug)
+//  )
+//object CompanyService {
+//  val dummyLayer = ZLayer.succeed(new CompanyServiceDummy)
+//}
+//}
